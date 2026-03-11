@@ -69,6 +69,9 @@ if data.empty:
     st.error(f"No data found for '{stock}'. Please check the symbol and try again.")
     st.stop()
 
+if isinstance(data.columns, pd.MultiIndex):
+    data.columns = data.columns.get_level_values(0)
+
 if len(data) < 100:
     st.error(f"Not enough data for '{stock}'. Need at least 100 days of history.")
     st.stop()
