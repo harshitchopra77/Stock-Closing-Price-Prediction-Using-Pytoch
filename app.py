@@ -101,7 +101,7 @@ y = y.flatten()
 
 # ── tomorrow's prediction ────────────────────────────────────────
 last_100_days = data[['Close']].tail(100)
-last_100_scaled = scaler.transform(last_100_days.values)  # .values fixes the warning
+last_100_scaled = scaler.transform(last_100_days.values) 
 input_seq = torch.tensor(
     last_100_scaled.reshape(1, 100, 1),
     dtype=torch.float32
