@@ -126,13 +126,7 @@ def get_next_trading_day():
 next_trading_day = get_next_trading_day()
 
 
-# ════════════════════════════════════════════════════════════════
-#  LAYOUT  (top → bottom)
-#  1. Tomorrow's predicted price
-#  2. Predicted vs Actual chart
-#  3. Moving average charts
-#  4. Raw data table
-# ════════════════════════════════════════════════════════════════
+
 
 # 1 ── Tomorrow's Predicted Price ────────────────────────────────
 st.subheader("Tomorrow's Predicted Closing Price")
