@@ -56,8 +56,10 @@ st.header('Stock Market Predictor')
 
 stock = st.text_input('Enter Stock Symbol', '')
 
-start = '2010-01-01'
-end = '2024-12-31'
+from datetime import datetime, timedelta
+
+start = '2015-01-01'
+end = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
 
 if not stock:
     st.info('Please enter a stock symbol to begin.')
@@ -144,3 +146,46 @@ plt.ylabel('Price')
 plt.legend()
 
 st.pyplot(fig4)
+
+st.subheader("Tomorrow's Predicted Closing Price")
+
+# get last 100 days from full dataset
+last_100_days = data[['Close']].tail(100)
+
+# scale
+last_100_scaled = scaler.transform(last_100_days.values)
+
+# reshape for model
+input_seq = torch.tensor(
+    last_100_scaled.reshape(1, 100, 1), 
+    dtype=torch.float32
+)
+
+# predict
+with torch.no_grad():
+    tomorrow_scaled = model(input_seq).numpy()
+
+# inverse transform
+tomorrow_price = scaler.inverse_transform(tomorrow_scaled)
+
+from datetime import datetime, timedelta
+
+def get_next_trading_day():
+    today = datetime.today()
+    tomorrow = today + timedelta(days=1)
+    
+    # if tomorrow is Saturday, skip to Monday
+    if tomorrow.weekday() == 5:  # 5 = Saturday
+        tomorrow = tomorrow + timedelta(days=2)
+    # if tomorrow is Sunday, skip to Monday
+    elif tomorrow.weekday() == 6:  # 6 = Sunday
+        tomorrow = tomorrow + timedelta(days=1)
+    
+    return tomorrow.strftime('%d %B %Y')
+
+next_trading_day = get_next_trading_day()
+
+st.metric(
+    label=f"Predicted closing price for {next_trading_day}",
+    value=f"${tomorrow_price[0][0]:.2f}"
+)
